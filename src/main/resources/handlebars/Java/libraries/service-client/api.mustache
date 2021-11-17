@@ -1,0 +1,46 @@
+package {{package}};
+
+{{#legacyDates}}
+import {{invokerPackage}}.ParamExpander;
+{{/legacyDates}}
+
+{{#imports}}import {{import}};
+{{/imports}}
+
+{{^fullJavaUtil}}
+import us.zoom.commons.http.declarative.annotation.ServiceInvoker;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+{{/fullJavaUtil}}
+
+{{>generatedAnnotation}}
+@ServiceInvoker(serviceKey = "webServiceKey")
+public interface {{classname}}  {
+
+{{#operations}}
+{{#operation}}
+{{#contents}}
+  /**
+   * {{summary}}
+   * {{notes}}
+   {{#parameters}}
+   * @param {{paramName}} {{description}}{{#required}} (required){{/required}}{{^required}} (optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+   {{/parameters}}
+   {{#returnType}}
+   * @return {{returnType}}
+   {{/returnType}}
+   {{#externalDocs}}
+   * {{description}}
+   * @see <a href="{{url}}">{{summary}} Documentation</a>
+   {{/externalDocs}}
+   */
+  @RequestMapping(value="{{{path}}}{{#hasQueryParams}}?{{/hasQueryParams}}{{#queryParams}}{{baseName}}={{braces "left"}}{{paramName}}{{braces "right"}}{{#has this 'more'}}&{{/has}}{{/queryParams}}", method = RequestMethod.{{httpMethod}} )
+  {{#returnType}}{{{returnType}}} {{/returnType}}{{^returnType}}void {{/returnType}}{{nickname}}({{#parameters}}{{#isNot this 'body-param'}}{{^legacyDates}}@PathVariable("{{paramName}}") {{/legacyDates}}{{#legacyDates}}@PathVariable(value="{{paramName}}", expander=ParamExpander.class) {{/legacyDates}}   {{/isNot}}      {{#is this 'body-param'}}@RequestBody {{/is}}{{{dataType}}} {{paramName}}{{#has this 'more'}}, {{/has}}
+  {{/parameters}}, @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken);
+  {{#hasQueryParams}}
+
+  {{/hasQueryParams}}
+  {{/contents}}
+  {{/operation}}
+{{/operations}}
+}

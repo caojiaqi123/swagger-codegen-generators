@@ -1,0 +1,12 @@
+package {{invokerPackage}};
+
+public interface InternalEndPoints {
+
+{{#operations}}
+    {{#operation}}
+        {{#contents}}
+           String {{{path}}} = "{{{path}}}";
+        {{/contents}}
+    {{/operation}}
+{{/operations}}
+}
